@@ -5,16 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 <title>Household Expense Tracker</title>
 
+<!-- XLSX for Excel export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Chart.js for graphs -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Flatpickr for calendar -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f7f9fb;margin:0;padding:15px;color:#333;}
 h1{text-align:center;color:#2c3e50;font-size:1.6rem;margin-bottom:20px;}
 .container{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:14px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 label{font-weight:600;margin-top:10px;display:block;font-size:.95rem;}
-input,select{padding:10px;margin-top:5px;margin-bottom:12px;width:100%;border:1px solid #ccc;border-radius:8px;font-size:1rem;appearance:none;-webkit-appearance:none;}
+input,select{padding:10px;margin-top:5px;margin-bottom:12px;width:100%;border:1px solid #ccc;border-radius:8px;font-size:1rem;}
 .button-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
 button{background-color:#3498db;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:1rem;flex:1;min-width:120px;}
 button:hover{background-color:#2980b9;}
@@ -27,102 +32,26 @@ tfoot td{font-weight:bold;background-color:#ecf0f1;text-align:right;}
 canvas{width:100%!important;height:auto!important;}
 
 /* Calculator Modal Styles */
-#calculatorModal{
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.5);
-  justify-content:center; align-items:center;
-  z-index:9999;
-}
-.calc-container{
-  background:white;
-  padding:20px;
-  border-radius:16px;
-  width:350px;
-  max-width:95%;
-  box-shadow:0 6px 20px rgba(0,0,0,0.3);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-.calc-container h3{
-  margin:0 0 10px 0;
-  text-align:center;
-}
-#calcInput{
-  width:100%;
-  font-size:1.6rem;
-  padding:12px;
-  margin-bottom:12px;
-  text-align:right;
-  border:1px solid #ccc;
-  border-radius:8px;
-}
-.calc-buttons{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  width:100%;
-}
-.calc-buttons button{
-  padding:16px 0;
-  font-size:1.2rem;
-  border:none;
-  border-radius:8px;
-  background:#3498db;
-  color:white;
-  cursor:pointer;
-  transition: background 0.2s;
-  min-width:0;
-  word-break:break-word;
-}
+#calculatorModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:9999;}
+.calc-container{background:white;padding:20px;border-radius:16px;width:350px;max-width:95%;box-shadow:0 6px 20px rgba(0,0,0,0.3);display:flex;flex-direction:column;align-items:center;}
+.calc-container h3{margin:0 0 10px 0;text-align:center;}
+#calcInput{width:100%;font-size:1.6rem;padding:12px;margin-bottom:12px;text-align:right;border:1px solid #ccc;border-radius:8px;}
+.calc-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;}
+.calc-buttons button{padding:16px 0;font-size:1.2rem;border:none;border-radius:8px;background:#3498db;color:white;cursor:pointer;transition: background 0.2s;min-width:0;word-break:break-word;}
 .calc-buttons button:hover{background:#2980b9;}
-.calc-buttons .ac-btn{
-  grid-column:span 4;
-  background:#e67e22;
-}
-.calc-close{
-  margin-top:12px;
-  background:#e74c3c;
-  color:white;
-  width:100%;
-  padding:14px 0;
-  border:none;
-  border-radius:8px;
-  font-size:1.1rem;
-  cursor:pointer;
-  transition: background 0.2s;
-}
+.calc-buttons .ac-btn{grid-column:span 4;background:#e67e22;}
+.calc-close{margin-top:12px;background:#e74c3c;color:white;width:100%;padding:14px 0;border:none;border-radius:8px;font-size:1.1rem;cursor:pointer;transition: background 0.2s;}
 .calc-close:hover{background:#c0392b;}
 
-/* Responsive adjustments */
-@media(max-width:500px){
-  .calc-container{width:95%;padding:15px;}
-  #calcInput{font-size:1.4rem;padding:10px;}
-  .calc-buttons button{padding:12px 0;font-size:1.1rem;}
-  .calc-close{font-size:1rem;padding:12px 0;}
-}
-@media(max-width:350px){
-  .calc-buttons button{padding:10px 0;font-size:1rem;}
-  #calcInput{font-size:1.2rem;}
-  .calc-close{font-size:.95rem;padding:10px 0;}
-}
+@media(max-width:500px){.calc-container{width:95%;padding:15px;}#calcInput{font-size:1.4rem;padding:10px;}.calc-buttons button{padding:12px 0;font-size:1.1rem;}.calc-close{font-size:1rem;padding:12px 0;}}
+@media(max-width:350px){.calc-buttons button{padding:10px 0;font-size:1rem;}#calcInput{font-size:1.2rem;}.calc-close{font-size:.95rem;padding:10px 0;}}
 </style>
 </head>
 <body>
 <h1>🏠 Household Expense Tracker</h1>
 <div class="container">
-  <label for="month">Month:</label>
-  <select id="month">
-    <option value="">--Select Month--</option>
-    <option>January</option><option>February</option><option>March</option>
-    <option>April</option><option>May</option><option>June</option>
-    <option>July</option><option>August</option><option>September</option>
-    <option>October</option><option>November</option>
-    <option>December</option>
-  </select>
+  <label for="month">Select Date:</label>
+  <input type="text" id="month" placeholder="Pick a date">
 
   <label for="type">Type:</label>
   <select id="type">
@@ -147,7 +76,7 @@ canvas{width:100%!important;height:auto!important;}
     <table id="expenseTable">
       <thead>
         <tr>
-          <th>Month</th><th>Type</th><th>Title</th><th>Amount ($)</th><th>Actions</th>
+          <th>Date</th><th>Type</th><th>Title</th><th>Amount ($)</th><th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -164,6 +93,11 @@ canvas{width:100%!important;height:auto!important;}
     <canvas id="barChart"></canvas>
     <h3 style="text-align:center;margin-top:20px;">🥧 Income vs Expenses</h3>
     <canvas id="pieChart"></canvas>
+  </div>
+
+  <!-- Copyright -->
+  <div style="text-align:center;margin-top:20px;font-size:0.9rem;color:#555;">
+    &copy; <span id="year"></span> DhruvinPatel. All rights reserved.
   </div>
 </div>
 
@@ -200,10 +134,21 @@ canvas{width:100%!important;height:auto!important;}
 </div>
 
 <script>
-// --- Expense Tracker ---
+// Initialize Flatpickr
+flatpickr("#month", {
+    dateFormat: "Y-m-d",
+    allowInput: true
+});
+
+// Expense Tracker Logic
 let entries=[],editIndex=null;
 let barChart,pieChart;
-window.onload=function(){const saved=localStorage.getItem("household_expenses");if(saved){entries=JSON.parse(saved);updateTable();}};
+
+window.onload=function(){
+  const saved=localStorage.getItem("household_expenses");
+  if(saved){entries=JSON.parse(saved);updateTable();}
+  document.getElementById('year').textContent=new Date().getFullYear();
+};
 
 function saveToLocal(){localStorage.setItem("household_expenses",JSON.stringify(entries));}
 function addEntry(){
@@ -213,27 +158,38 @@ function addEntry(){
   const amount=parseFloat(document.getElementById("amount").value);
   if(!month||!title||isNaN(amount)){alert("Please fill in all fields!");return;}
   if(editIndex===null){entries.push({Month:month,Type:type,Title:title,Amount:amount});}
-  else{entries[editIndex]={Month:month,Type:type,Title:title,Amount:amount};editIndex=null;document.getElementById("addBtn").textContent="Add Entry";}
-  saveToLocal();updateTable();document.getElementById("month").value="";document.getElementById("title").value="";document.getElementById("amount").value="";
+  else{entries[editIndex]={Month:month,Type:type,Title:title,Amount:amount};
+       editIndex=null;document.getElementById("addBtn").textContent="Add Entry";}
+  saveToLocal();updateTable();
+  document.getElementById("month").value="";
+  document.getElementById("title").value="";
+  document.getElementById("amount").value="";
 }
 function updateTable(){
-  const tbody=document.querySelector("#expenseTable tbody");tbody.innerHTML="";
+  const tbody=document.querySelector("#expenseTable tbody");
+  tbody.innerHTML="";
   entries.forEach((e,i)=>{
     const r=tbody.insertRow();
-    r.insertCell(0).innerText=e.Month;r.insertCell(1).innerText=e.Type;r.insertCell(2).innerText=e.Title;r.insertCell(3).innerText=e.Amount.toFixed(2);
-    r.insertCell(4).innerHTML=`<button onclick="editEntry(${i})">✏️</button><button onclick="deleteEntry(${i})">🗑️</button>`;
+    r.insertCell(0).innerText=e.Month;
+    r.insertCell(1).innerText=e.Type;
+    r.insertCell(2).innerText=e.Title;
+    r.insertCell(3).innerText=e.Amount.toFixed(2);
+    r.insertCell(4).innerHTML=`<button onclick="editEntry(${i})">✏️</button>
+                               <button onclick="deleteEntry(${i})">🗑️</button>`;
   });
   updateTotals();drawCharts();
 }
 function editEntry(i){
   const e=entries[i];
-  document.getElementById("month").value=e.Month;document.getElementById("type").value=e.Type;
-  document.getElementById("title").value=e.Title;document.getElementById("amount").value=e.Amount;
-  document.getElementById("addBtn").textContent="Save Changes";editIndex=i;window.scrollTo({top:0,behavior:"smooth"});
+  document.getElementById("month").value=e.Month;
+  document.getElementById("type").value=e.Type;
+  document.getElementById("title").value=e.Title;
+  document.getElementById("amount").value=e.Amount;
+  document.getElementById("addBtn").textContent="Save Changes";
+  editIndex=i;window.scrollTo({top:0,behavior:"smooth"});
 }
 function deleteEntry(i){if(confirm("Delete this entry?")){entries.splice(i,1);saveToLocal();updateTable();}}
 function clearAll(){if(confirm("Clear all saved data?")){entries=[];saveToLocal();updateTable();}}
-
 function updateTotals(){
   let inc=0,exp=0;
   entries.forEach(e=>{if(e.Type==="Income")inc+=e.Amount;else exp+=e.Amount;});
@@ -241,7 +197,6 @@ function updateTotals(){
   document.getElementById("totalExpenses").innerText=`$${exp.toFixed(2)}`;
   document.getElementById("balance").innerText=`$${(inc-exp).toFixed(2)}`;
 }
-
 function exportExcel(){
   if(entries.length===0){alert("No data to export!");return;}
   const ws=XLSX.utils.json_to_sheet(entries);
@@ -250,64 +205,43 @@ function exportExcel(){
   XLSX.writeFile(wb,"Household_Expenses.xlsx");
 }
 
-// --- Charts ---
+// Charts
 function drawCharts(){
-  const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   let incomeData=Array(12).fill(0),expenseData=Array(12).fill(0);
   entries.forEach(e=>{
-    const idx=months.indexOf(e.Month);
-    if(idx>=0){
-      if(e.Type==="Income")incomeData[idx]+=e.Amount;
-      else expenseData[idx]+=e.Amount;
-    }
+    const d=new Date(e.Month);
+    const idx=d.getMonth();
+    if(e.Type==="Income")incomeData[idx]+=e.Amount;
+    else expenseData[idx]+=e.Amount;
   });
-
   const barCtx=document.getElementById("barChart").getContext("2d");
   if(barChart)barChart.destroy();
   barChart=new Chart(barCtx,{
     type:"bar",
-    data:{
-      labels:months,
-      datasets:[
-        {label:"Income",data:incomeData,backgroundColor:"#2ecc71"},
-        {label:"Expense",data:expenseData,backgroundColor:"#e74c3c"}
-      ]
-    },
-    options:{
-      responsive:true,
-      plugins:{legend:{position:"bottom"}},
-      scales:{x:{ticks:{autoSkip:true,maxTicksLimit:6}},y:{beginAtZero:true}}
-    }
+    data:{labels:months,datasets:[{label:"Income",data:incomeData,backgroundColor:"#2ecc71"},{label:"Expense",data:expenseData,backgroundColor:"#e74c3c"}]},
+    options:{responsive:true,plugins:{legend:{position:"bottom"}},scales:{x:{ticks:{autoSkip:true,maxTicksLimit:6}},y:{beginAtZero:true}}}
   });
-
   const totalIncome=incomeData.reduce((a,b)=>a+b,0);
   const totalExpense=expenseData.reduce((a,b)=>a+b,0);
   const pieCtx=document.getElementById("pieChart").getContext("2d");
   if(pieChart)pieChart.destroy();
   pieChart=new Chart(pieCtx,{
     type:"pie",
-    data:{
-      labels:["Income","Expense"],
-      datasets:[{data:[totalIncome,totalExpense],backgroundColor:["#27ae60","#c0392b"]}]
-    },
+    data:{labels:["Income","Expense"],datasets:[{data:[totalIncome,totalExpense],backgroundColor:["#27ae60","#c0392b"]}]},
     options:{responsive:true,plugins:{legend:{position:"bottom"}}}
   });
 }
 
-// --- Calculator Functions ---
+// Calculator
 function openCalculator(){document.getElementById("calculatorModal").style.display="flex";}
 function closeCalculator(){document.getElementById("calculatorModal").style.display="none";}
 function pressCalc(val){document.getElementById("calcInput").value+=val;}
 function clearCalc(){document.getElementById("calcInput").value="";}
 function calculateResult(){
-  try{
-    const result=eval(document.getElementById("calcInput").value);
-    document.getElementById("calcInput").value=result;
-  }catch(e){alert("Invalid calculation");}
+  try{const result=eval(document.getElementById("calcInput").value);document.getElementById("calcInput").value=result;}
+  catch(e){alert("Invalid calculation");}
 }
 </script>
-  <div style="text-align:center;margin-top:20px;font-size:0.9rem;color:#555;">
-  &copy; 2025 DhruvinPatel. All rights reserved.
-</div>
 </body>
 </html>
